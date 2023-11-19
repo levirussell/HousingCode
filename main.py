@@ -1,5 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
 from datetime import datetime
 import pandas as pd
 from datetime import timedelta
@@ -71,75 +72,79 @@ for date, mortgage_rate in mortgage_rates.iterrows():
     
 
 
+def create_graphs():
+    # Set the plot style to a dark background
+    plt.style.use('dark_background')
 
-# Set the plot style to a dark background
-plt.style.use('dark_background')
+    # Set the text color to white
+    plt.rcParams['text.color'] = 'white'
 
-# Set the text color to white
-plt.rcParams['text.color'] = 'white'
+    # Set the desired figure width and height
+    fig_width = 14
+    fig_height = 7
 
-# Set the desired figure width and height
-fig_width = 14
-fig_height = 7
+    fig, ax1 = plt.subplots(figsize=(fig_width, fig_height))
 
-fig, ax1 = plt.subplots(figsize=(fig_width, fig_height))
+    # Plot the data on the primary axis
+    ax1.plot(date_list, monthly_cost, color='yellow', linewidth=1.0)
+    ax1.set_xlabel('Date', fontsize=16)
+    ax1.set_ylabel('Monthly Payment', color='yellow', fontsize=16)
 
-# Plot the data on the primary axis
-ax1.plot(date_list, monthly_cost, color='yellow', linewidth=1.0)
-ax1.set_xlabel('Date', fontsize=16)
-ax1.set_ylabel('Monthly Payment', color='yellow', fontsize=16)
+    # Create the 2nd axis
+    ax2 = ax1.twinx()
 
-# Create the 2nd axis
-ax2 = ax1.twinx()
+    # Plot the data on the secondary axis
+    ax2.plot(home_prices.index.tolist(), home_prices['MSPUS'].tolist(), color='red', linewidth=1.0)
+    ax2.set_ylabel('Average Home Price', color='red', fontsize=16)
 
-# Plot the data on the secondary axis
-ax2.plot(home_prices.index.tolist(), home_prices['MSPUS'].tolist(), color='red', linewidth=1.0)
-ax2.set_ylabel('Average Home Price', color='red', fontsize=16)
+    # Create the 3rd axis
+    ax3 = ax1.twinx()
 
-# Create the 3rd axis
-ax3 = ax1.twinx()
-
-# Plot the data on the secondary axis
-ax3.plot(mortgage_rates.index.tolist(), mortgage_rates['MORTGAGE30US'].tolist(), color='green', linewidth=0.5)
-ax3.set_ylabel('Interest Rate', color='green', fontsize=16, labelpad=-40)
-ax3.tick_params(axis='y', pad=-20)
-
-
-plt.title('Average Mortgage sub Insurance+Taxes', fontsize=20)
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
-plt.legend()
-
-# Save and Display the graph
-plt.savefig(f'avg_mortgage.png', dpi=float(600))
-if SHOW_OUTPUT:
-    plt.show()
+    # Plot the data on the secondary axis
+    ax3.plot(mortgage_rates.index.tolist(), mortgage_rates['MORTGAGE30US'].tolist(), color='green', linewidth=0.5)
+    ax3.set_ylabel('Interest Rate', color='green', fontsize=16, labelpad=-37)
+    ax3.set_ylim(bottom=0)
+    ax3.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}')) # No decimal places
+    ax3.tick_params(axis='y', pad=-20)
 
 
-# Output 2nd graph
+    plt.title('Average Mortgage sub Insurance/Taxes', fontsize=20)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend()
 
-fig2, ax_1 = plt.subplots(figsize=(fig_width, fig_height))
-
-# Plot the data on the secondary axis
-ax_1.plot(median_household_income.index.tolist(), median_household_income['MEHOINUSA672N'].tolist(), color='green', linewidth=1.0)
-ax_1.set_xlabel('Date', fontsize=16)
-ax_1.set_ylabel('Household Income', color='green', fontsize=16)
-
-
-# Create the 2nd axis
-ax_2 = ax_1.twinx()
-
-# Plot the data on the secondary axis
-ax_2.plot(monthly_cost_precentage_dates, monthly_cost_precentage, color='yellow', linewidth=1.0)
-ax_2.set_ylabel('Yearly Mortgage Payment as Percent of Income', color='yellow', fontsize=16, labelpad=20)
+    # Save and Display the graph
+    plt.savefig(f'avg_mortgage.png', dpi=float(600))
+    if SHOW_OUTPUT:
+        plt.show()
 
 
-plt.title('Average Yearly Mortgage as Percent of Household Income', fontsize=20)
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
-plt.legend()
+    # Output 2nd graph
 
-# Save and Display the graph
-plt.savefig(f'mortgage_to_income.png', dpi=float(600))
-if SHOW_OUTPUT:
-    plt.show()
+    fig2, ax_1 = plt.subplots(figsize=(fig_width, fig_height))
+
+    # Plot the data on the secondary axis
+    ax_1.plot(median_household_income.index.tolist(), median_household_income['MEHOINUSA672N'].tolist(), color='green', linewidth=1.0)
+    ax_1.set_xlabel('Date', fontsize=16)
+    ax_1.set_ylabel('Household Income', color='green', fontsize=16)
+
+
+    # Create the 2nd axis
+    ax_2 = ax_1.twinx()
+
+    # Plot the data on the secondary axis
+    ax_2.plot(monthly_cost_precentage_dates, monthly_cost_precentage, color='yellow', linewidth=1.0)
+    ax_2.set_ylabel('Yearly Mortgage Payment as Percent of Income', color='yellow', fontsize=16, labelpad=20)
+
+
+    plt.title('Average Yearly Mortgage as Percent of Household Income', fontsize=20)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend()
+
+    # Save and Display the graph
+    plt.savefig(f'mortgage_to_income.png', dpi=float(600))
+    if SHOW_OUTPUT:
+        plt.show()
+
+create_graphs()
